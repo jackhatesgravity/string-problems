@@ -1,5 +1,5 @@
-use string_problems::say_hello;
+use string_problems::{reverse_string, greeting_string, to_pig_latin};
 
 fn main() {
-    println!("{}", say_hello());
+    to_pig_latin("apple");
 }
