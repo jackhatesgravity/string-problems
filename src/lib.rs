@@ -20,31 +20,44 @@ pub fn reverse_string(word: &str) -> String {
     result
 }
 
+// Helper function
+fn is_vowel(c: char) -> bool {
+    let vowels = ['a', 'e', 'i', 'o', 'u'];
+    vowels.contains(&c)
+}
+
 // Helper function for the Pig Latin operation
-pub fn count_starting_consonants(word: &str) -> usize {
-    todo!()
+fn count_starting_consonants(word: &str) -> usize {
+    let mut result = 0;
+    for c in word.chars() {
+        if is_vowel(c) {
+            break;
+        } else {
+            result += 1;
+        }
+    }
+
+    result
 }
 
 // Pig Latin
 pub fn to_pig_latin(word: &str) -> String {
-    // Early out for singletons
-    if word.len() < 2 {
-        return String::from(word);
-    }
-
-    // I think a good way to approach this is to use grapheme masks, so that's what I'm doing.
-    let vowels = ['a', 'e', 'i', 'o', 'u'];
-    if word.starts_with(vowels) {
-        println!("Starts with vowel!");
-    }
-
     // Words that begin with consonants: move first letter to end and add -ay.
     // Words that begin with consonant clusters: move cluster to end and add -ay.
     // Words that begin with vowels: add -nay.
     // Single letter words pass right through without conversion.
-    String::from("Hello")
 
-    // Already I know this needs to be moved to a match pattern, using if for now
+    // Slightly messy approach, but count number of starting consonants and use match to respond.
+    let cluster_size = count_starting_consonants(word);
+    match cluster_size {
+        0 => println!("{word} starts with a vowel."),
+        1 => println!("{word} starts with a consonant."),
+        2 => println!("{word} starts with two consonants."),
+        3 => println!("{word} starts with three consonants."),
+        _ => println!("{word} is not a valid English word."),
+    }
+
+    String::from("Hello")
 }
 
 
@@ -75,6 +88,17 @@ mod tests {
     #[test]
     fn reverses_string() {
         assert_eq!(String::from("olleh"), reverse_string("hello"));
+    }
+
+
+    #[test]
+    fn checks_if_vowel() {
+        assert!(is_vowel('a'))
+    }
+
+    #[test]
+    fn checks_if_consonant() {
+        assert!(!is_vowel('b'))
     }
 
     #[test]
@@ -121,31 +145,36 @@ mod tests {
         assert_eq!(String::from("a"), to_pig_latin("a"))
     }
 
-    // #[test]
-    // fn converts_from_pig_latin() {
-    //     todo!()
-    // }
-    //
-    //
-    // #[test]
-    // fn converts_to_caesar_cipher() {
-    //     todo!()
-    // }
-    //
-    //
-    // #[test]
-    // fn converts_from_caesar_cipher() {
-    //     todo!()
-    // }
-    //
-    //
-    // #[test]
-    // fn counts_vowels() {
-    //     todo!()
-    // }
-    //
-    // #[test]
-    // fn identifies_palindrome() {
-    //     todo!()
-    // }
+    #[test]
+    #[ignore]
+    fn converts_from_pig_latin() {
+        todo!()
+    }
+
+
+    #[test]
+    #[ignore]
+    fn converts_to_caesar_cipher() {
+        todo!()
+    }
+
+
+    #[test]
+    #[ignore]
+    fn converts_from_caesar_cipher() {
+        todo!()
+    }
+
+
+    #[test]
+    #[ignore]
+    fn counts_vowels() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn identifies_palindrome() {
+        todo!()
+    }
 }
