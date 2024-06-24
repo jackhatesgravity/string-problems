@@ -1,4 +1,6 @@
 extern crate unicode_segmentation;
+use std::error::Error;
+
 
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -46,11 +48,10 @@ fn is_vowel(c: char) -> bool {
  I think I need to move the return value to a Result<Option<String>, Err> so I can better handle
  the errors that come up in the encryption process.
  */
-pub fn to_pig_latin(word: &str) -> Option<String> {
-
-    // Handle the case of the empty string.
+pub fn to_pig_latin(word: &str) -> Result<String, Box<dyn Error>> {
+    // Return an error for the empty string.
     if word.is_empty() {
-        return None;
+        return Err("Empty word provided".into());
     }
 
     // Find the length of the starting consonant cluster.
@@ -58,17 +59,24 @@ pub fn to_pig_latin(word: &str) -> Option<String> {
 
     // Handle the case of a starting vowel.
     if cluster_size == 0 {
-        return Some(format!("{}nay", word));
+        return Ok(format!("{}nay", word));
     }
 
-    // Panic for now. Handle better later.
+    // Return an error instead of panicking.
     if cluster_size > 3 {
-        panic!("Largest English starting cluster is 3!");
+        return Err("Largest English starting cluster is 3!".into());
     }
 
     // Format and return the result.
     let (first_letters, suffix) = word.split_at(cluster_size);
-    Some(format!("{}{}ay", suffix, first_letters))
+    Ok(format!("{}{}ay", suffix, first_letters))
+}
+
+pub fn print_pig_latin(word: &str) {
+    match to_pig_latin(word) {
+        Ok(pig_latin_word) => println!("{}", pig_latin_word),
+        Err(e) => println!("Error: {}", e),
+    }
 }
 
 
