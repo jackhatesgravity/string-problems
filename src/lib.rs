@@ -12,52 +12,63 @@ pub fn greeting_slice() -> &'static str {
 }
 
 // Reverse String (using graphemes, not chars)
-pub fn reverse_string(word: &str) -> String {
+pub fn reverse_string(word: &str) -> Option<String> {
+    if word.is_empty() {
+        return None;
+    }
     let result = word
         .graphemes(true)
         .rev()
         .collect();
-    result
+
+    Some(result)
 }
 
-// Helper function
-fn is_vowel(c: char) -> bool {
-    let vowels = ['a', 'e', 'i', 'o', 'u'];
-    vowels.contains(&c)
-}
-
-// Helper function for the Pig Latin operation
 fn count_starting_consonants(word: &str) -> usize {
-    let mut result = 0;
-    for c in word.chars() {
-        if is_vowel(c) {
-            break;
-        } else {
-            result += 1;
-        }
-    }
-
-    result
+    word.chars()
+        .take_while(|&c| !is_vowel(c))
+        .count()
 }
 
-// Pig Latin
-pub fn to_pig_latin(word: &str) -> String {
-    // Words that begin with consonants: move first letter to end and add -ay.
-    // Words that begin with consonant clusters: move cluster to end and add -ay.
-    // Words that begin with vowels: add -nay.
-    // Single letter words pass right through without conversion.
+fn is_vowel(c: char) -> bool {
+    matches!(c, 'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O' | 'U')
+}
 
-    // Slightly messy approach, but count number of starting consonants and use match to respond.
-    let cluster_size = count_starting_consonants(word);
-    match cluster_size {
-        0 => println!("{word} starts with a vowel."),
-        1 => println!("{word} starts with a consonant."),
-        2 => println!("{word} starts with two consonants."),
-        3 => println!("{word} starts with three consonants."),
-        _ => println!("{word} is not a valid English word."),
+/*
+ To Pig Latin function.
+
+ Words that begin with consonants: move first letter to end and add -ay.
+ Words that begin with consonant clusters: move cluster to end and add -ay.
+ Words that begin with vowels: add -nay.
+ Words that start with clusters of more than three aren't valid English words.
+ String validation is handled outside of this method.
+
+ I think I need to move the return value to a Result<Option<String>, Err> so I can better handle
+ the errors that come up in the encryption process.
+ */
+pub fn to_pig_latin(word: &str) -> Option<String> {
+
+    // Handle the case of the empty string.
+    if word.is_empty() {
+        return None;
     }
 
-    String::from("Hello")
+    // Find the length of the starting consonant cluster.
+    let cluster_size = count_starting_consonants(word);
+
+    // Handle the case of a starting vowel.
+    if cluster_size == 0 {
+        return Some(format!("{}nay", word));
+    }
+
+    // Panic for now. Handle better later.
+    if cluster_size > 3 {
+        panic!("Largest English starting cluster is 3!");
+    }
+
+    // Format and return the result.
+    let (first_letters, suffix) = word.split_at(cluster_size);
+    Some(format!("{}{}ay", suffix, first_letters))
 }
 
 
@@ -72,6 +83,7 @@ pub fn to_pig_latin(word: &str) -> String {
 
 // Advanced - Text Editor
 
+#[cfg(test)]
 mod tests {
     use super::*;
 
@@ -87,7 +99,7 @@ mod tests {
 
     #[test]
     fn reverses_string() {
-        assert_eq!(String::from("olleh"), reverse_string("hello"));
+        assert_eq!(String::from("olleh"), reverse_string("hello").unwrap());
     }
 
 
@@ -123,26 +135,22 @@ mod tests {
 
     #[test]
     fn converts_to_pig_latin_consonant() {
-        assert_eq!(String::from("atinlay"), to_pig_latin("latin"))
+        assert_eq!(String::from("atinlay"), to_pig_latin("latin").unwrap())
     }
 
     #[test]
     fn converts_to_pig_latin_double_cluster() {
-        assert_eq!(String::from("ingstray"), to_pig_latin("string"))
+        assert_eq!(String::from("ingstray"), to_pig_latin("string").unwrap())
     }
 
+    #[test]
     fn converts_to_pig_latin_triple_cluster() {
-        assert_eq!(String::from("itsplay"), to_pig_latin("split"))
+        assert_eq!(String::from("itsplay"), to_pig_latin("split").unwrap())
     }
 
     #[test]
     fn converts_to_pig_latin_vowel() {
-        assert_eq!(String::from("omeletteway"), to_pig_latin("omelette"))
-    }
-
-    #[test]
-    fn converts_to_pig_latin_singleton() {
-        assert_eq!(String::from("a"), to_pig_latin("a"))
+        assert_eq!(String::from("omelettenay"), to_pig_latin("omelette").unwrap())
     }
 
     #[test]

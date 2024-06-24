@@ -1,9 +1,16 @@
-use string_problems::{reverse_string, greeting_string, to_pig_latin};
+use string_problems::to_pig_latin;
 
 fn main() {
-    to_pig_latin("apple");
-    to_pig_latin("title");
-    to_pig_latin("thistle");
-    to_pig_latin("split");
-    to_pig_latin("xkcd");
+    let word = to_pig_latin("apple");
+    let word = word.unwrap();
+    println!("{}", word);
+    let word = to_pig_latin("title");
+    let word = word.unwrap();
+    println!("{}", word);
+    let word = to_pig_latin("thistle");
+    let word = word.unwrap();
+    println!("{}", word);
+    let word = to_pig_latin("split");
+    let word = word.unwrap();
+    println!("{}", word);
 }
