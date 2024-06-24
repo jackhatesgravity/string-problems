@@ -1,7 +1,6 @@
 extern crate unicode_segmentation;
+
 use std::error::Error;
-
-
 use unicode_segmentation::UnicodeSegmentation;
 
 // Hello, world!
@@ -48,7 +47,7 @@ fn is_vowel(c: char) -> bool {
  I think I need to move the return value to a Result<Option<String>, Err> so I can better handle
  the errors that come up in the encryption process.
  */
-pub fn to_pig_latin(word: &str) -> Result<String, Box<dyn Error>> {
+fn to_pig_latin(word: &str) -> Result<String, Box<dyn Error>> {
     // Return an error for the empty string.
     if word.is_empty() {
         return Err("Empty word provided".into());
@@ -72,7 +71,7 @@ pub fn to_pig_latin(word: &str) -> Result<String, Box<dyn Error>> {
     Ok(format!("{}{}ay", suffix, first_letters))
 }
 
-pub fn print_pig_latin(word: &str) {
+pub fn print_to_pig_latin(word: &str) {
     match to_pig_latin(word) {
         Ok(pig_latin_word) => println!("{}", pig_latin_word),
         Err(e) => println!("Error: {}", e),
